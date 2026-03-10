@@ -28,49 +28,41 @@ public extension UserDefaults {
   }
 }
 
+/// A snapshot of the settings values for a group of keys.
 public struct SettingsSnapshot<each V> {
-//  let values: (repeat (AppSettingKey<each V>, each V))
-//  init(values: (repeat (AppSettingKey<each V>, each V))) {
-//    self.values = values
-//  }
-
   let values: (repeat (AppSettingKey<each V>, Any?))
   init(values: (repeat (AppSettingKey<each V>, Any?))) {
     self.values = values
   }
 
+  /// Log the keys and values.
   public func print() {
     for v in repeat each values {
       Swift.print("\(v.0): \(v.1 ?? "<nil>")")
     }
-    
   }
 }
 
-//  func snapshot<each V>(key: repeat AppSettingKey<each V>) -> [String: Any] {
-//    var result: [String: Any] = [:]
-//    for k in repeat each key {
-//      if let v = UserDefaults.standard.value(forKey: k) {
-//        result[k.key] = v
-//      }
-//    }
-//    return result
-//  }
-
+extension SettingsSnapshot: Equatable where repeat each V:Equatable {
+  public static func == (lhs: SettingsSnapshot<repeat each V>, rhs: SettingsSnapshot<repeat each V>) -> Bool {
+    for v in repeat (each lhs.values, each rhs.values) {
+      if v.0.0.typedValue(v.0.1) != v.1.0.typedValue(v.1.1) {
+        return false
+      }
+    }
+    return true
+  }
+}
 
 public extension UserDefaults {
+  /// Return a snapshot of the current values for a group of keys.
   func snapshot<each V>(for keys: repeat AppSettingKey<each V>) -> SettingsSnapshot<repeat each V> {
-//    var result: [String: Any] = [:]
-//    for k in repeat each keys {
-//      if object(forKey: k.key) != nil {
-//        result[k.key] = value(forKey: k)
-//      }
-//    }
     return SettingsSnapshot(
       values: (repeat (each keys, value(forKey: each keys)))
     )
   }
   
+  /// Restore a snapshot of the values for a group of keys.
   func restore<each V>(
     from snapshot: SettingsSnapshot<repeat each V>
   ) {

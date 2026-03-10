@@ -154,4 +154,19 @@ struct SnapshotTests {
     #expect(settings2.value(forKey: .testString) == "foo bar")
     #expect(settings2.value(forKey: .testInt) == 123)
   }
+  
+  @Test func testEquality() {
+    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    settings.set("foo bar", forKey: .testString)
+    settings.set(123, forKey: .testInt)
+
+    let snapshot1 = settings.snapshot(for: .testString, .testInt)
+    let snapshot2 = settings.snapshot(for: .testString, .testInt)
+    #expect(snapshot1 == snapshot2)
+
+    settings.set("bar foo", forKey: .testString)
+    let snapshot4 = settings.snapshot(for: .testString, .testInt)
+    #expect(snapshot1 != snapshot4)
+
+  }
 }

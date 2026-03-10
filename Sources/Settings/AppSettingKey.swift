@@ -30,6 +30,10 @@ public struct AppSettingKey<Value> {
     self.key = key
     self.defaultValue = defaultValue
   }
+  
+  public func typedValue(_ untyped: Any?) -> Value? {
+    untyped as? Value
+  }
 }
 
 public extension AppSettingKey where Value == Bool {
