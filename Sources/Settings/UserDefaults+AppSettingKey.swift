@@ -26,6 +26,11 @@ public extension UserDefaults {
   func set<V>(_ value: V, forKey key: AppSettingKey<V>) where V: SettingsCompatible {
     set(value, forKey: key.key)
   }
+  
+  /// 
+  func hasKey<V>(_ key: AppSettingKey<V>) -> Bool {
+    object(forKey: key.key) != nil
+  }
 }
 
 /// A snapshot of the settings values for a group of keys.
