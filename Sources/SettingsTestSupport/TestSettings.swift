@@ -1,9 +1,7 @@
-//
-//  TestSettings.swift
-//  Settings
-//
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //  Created by Sam Deane on 02/10/2026.
-//
+//  Copyright © 2026 Elegant Chaos Limited. All rights reserved.
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 import Foundation
 
@@ -13,16 +11,29 @@ import Foundation
 /// `removePersistentDomain(forName:)` only empties that file. Keeping the values out of the
 /// preferences system is the only way for a test to leave nothing behind.
 ///
-/// SwiftUI's `@AppStorage` reads and writes these values when given the instance as its
-/// store. Changes send no key-value observation notifications, so nothing that observes
-/// the settings, including a live view, is told about them. Tests that need that should
-/// use ``persistentSuite(prefix:)`` instead.
+/// Reading and writing values, registering defaults, and `dictionaryRepresentation()` all
+/// stay in memory. SwiftUI's `@AppStorage` reads and writes these values when given the
+/// instance as its store.
+///
+/// It differs from a real `UserDefaults` in these ways:
+///
+/// - Registered defaults belong to the instance. A real registration domain is shared by
+///   the whole process.
+/// - Nothing else is in the search list, so `dictionaryRepresentation()` holds only the
+///   stored and registered values, and the global and argument domains are not read.
+/// - Changes send no key-value observation notifications, so nothing that observes the
+///   settings, including a live view, is told about them.
+/// - The domain and suite methods, such as `setPersistentDomain(_:forName:)` and
+///   `addSuite(named:)`, are inherited unchanged and act on the real preferences system.
+///
+/// Tests that need any of that should use ``persistentSuite(prefix:)`` instead.
 public nonisolated final class TestSettings: UserDefaults, @unchecked Sendable {
   /// The suite every instance is nominally attached to. Nothing is ever written to it.
   public static let suiteName = "SettingsTestSupport.TestSettings"
 
   private let lock = NSLock()
   private var values: [String: Any] = [:]
+  private var registered: [String: Any] = [:]
 
   /// Creates empty settings.
   public init() {
@@ -30,10 +41,10 @@ public nonisolated final class TestSettings: UserDefaults, @unchecked Sendable {
     super.init(suiteName: Self.suiteName)!
   }
 
-  // Foundation's typed accessors route through these three methods.
+  // Foundation's typed accessors route through the first three of these methods.
 
   public override func object(forKey defaultName: String) -> Any? {
-    lock.withLock { values[defaultName] }
+    lock.withLock { values[defaultName] ?? registered[defaultName] }
   }
 
   public override func set(_ value: Any?, forKey defaultName: String) {
@@ -42,6 +53,14 @@ public nonisolated final class TestSettings: UserDefaults, @unchecked Sendable {
 
   public override func removeObject(forKey defaultName: String) {
     lock.withLock { values[defaultName] = nil }
+  }
+
+  public override func register(defaults registrationDictionary: [String: Any]) {
+    lock.withLock { registered.merge(registrationDictionary) { _, new in new } }
+  }
+
+  public override func dictionaryRepresentation() -> [String: Any] {
+    lock.withLock { registered.merging(values) { _, stored in stored } }
   }
 }
 

@@ -34,6 +34,55 @@ struct TestSettingsTests {
     #expect(settings.string(forKey: "label") == "name")
   }
 
+  @Test func storesDoublesAndURLs() throws {
+    let settings = TestSettings()
+    let url = try #require(URL(string: "https://example.com/path"))
+
+    settings.set(1.5, forKey: "ratio")
+    settings.set(url, forKey: "link")
+
+    #expect(settings.double(forKey: "ratio") == 1.5)
+    #expect(settings.url(forKey: "link") == url)
+  }
+
+  @Test func registeredDefaultsAreReadUntilAValueIsSet() {
+    let settings = TestSettings()
+    settings.register(defaults: ["label": "registered", "count": 1])
+
+    #expect(settings.string(forKey: "label") == "registered")
+    #expect(settings.integer(forKey: "count") == 1)
+
+    settings.set("stored", forKey: "label")
+    #expect(settings.string(forKey: "label") == "stored")
+
+    settings.removeObject(forKey: "label")
+    #expect(settings.string(forKey: "label") == "registered")
+  }
+
+  @Test func registeredDefaultsStayWithTheirInstance() {
+    let first = TestSettings()
+    let second = TestSettings()
+
+    first.register(defaults: ["label": "registered"])
+
+    #expect(second.object(forKey: "label") == nil)
+    #expect(UserDefaults.standard.object(forKey: "label") == nil)
+  }
+
+  @Test func dictionaryRepresentationHoldsStoredAndRegisteredValues() {
+    let settings = TestSettings()
+    settings.register(defaults: ["label": "registered", "count": 1])
+    settings.set("stored", forKey: "label")
+    settings.set(true, forKey: "flag")
+
+    let representation = settings.dictionaryRepresentation()
+
+    #expect(representation.count == 3)
+    #expect(representation["label"] as? String == "stored")
+    #expect(representation["count"] as? Int == 1)
+    #expect(representation["flag"] as? Bool == true)
+  }
+
   @Test func removesValues() {
     let settings = TestSettings()
     settings.set("name", forKey: "label")

@@ -84,7 +84,7 @@ settings.set(true, forKey: .showDebug)
 ```
 
 A real suite leaves a preferences file behind once it has been written to, even after `removePersistentDomain(forName:)`.
-`TestSettings` sends no key-value observation notifications. When a test needs a real suite, create it with a recognisable prefix so that the leftover files can be found and removed:
+`TestSettings` sends no key-value observation notifications, and its registered defaults belong to the instance instead of the process. When a test needs a real suite, create it with a recognisable prefix so that the leftover files can be found and removed:
 
 ```swift
 let settings = TestSettings.persistentSuite(prefix: "MyAppTests")
