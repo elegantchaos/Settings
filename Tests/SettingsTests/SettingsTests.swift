@@ -1,12 +1,11 @@
-//
-//  Test.swift
-//  Settings
-//
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //  Created by Sam Deane on 02/03/2026.
-//
+//  Copyright © 2026 Elegant Chaos Limited. All rights reserved.
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 import Foundation
 import Settings
+import SettingsTestSupport
 import Testing
 
 extension AppSettingKey where Value == String {
@@ -38,14 +37,14 @@ enum TestEnum: String {
 struct SettingsTests {
 
   func testRead<T>(key: AppSettingKey<T>, value testValue: T) where T: Equatable, T: RawRepresentable {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set(testValue.rawValue, forKey: key.key)
     let value = settings.value(forKey: key)
     #expect(value == testValue)
   }
 
   func testRead<T>(key: AppSettingKey<T>, value testValue: T) where T: Equatable, T: SettingsCompatible {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set(testValue, forKey: key)
 
     let value = settings.value(forKey: key)
@@ -54,14 +53,14 @@ struct SettingsTests {
 
 
   func testReadDefault<T: Equatable>(key: AppSettingKey<T>) {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
 
     let value = settings.value(forKey: key)
     #expect(value == key.defaultValue)
   }
 
   func testWrite<T: Equatable>(key: AppSettingKey<T>, value testValue: T) where T: Equatable, T: RawRepresentable {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set(testValue, forKey: key)
     let raw = settings.object(forKey: key.key) as? T.RawValue
     let value = raw.flatMap { T(rawValue: $0) }
@@ -69,7 +68,7 @@ struct SettingsTests {
   }
 
   func testWrite<T: Equatable>(key: AppSettingKey<T>, value testValue: T) where T: Equatable, T: SettingsCompatible {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set(testValue, forKey: key)
     let value = settings.object(forKey: key.key) as? T
     #expect(value == testValue)
@@ -107,7 +106,7 @@ import SwiftUI
 
 struct SettingsAppStorageTests {
   @Test func testAppStorageString() {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set("foo bar", forKey: .testString)
     @AppStorage(.testString, store: settings) var testString
     #expect(testString == "foo bar")
@@ -115,7 +114,7 @@ struct SettingsAppStorageTests {
   }
   
   @Test func testAppStorageEnum() {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set(TestEnum.b, forKey: .testEnum)
     @AppStorage(.testEnum, store: settings) var testEnum
     #expect(testEnum == .b)
@@ -123,14 +122,14 @@ struct SettingsAppStorageTests {
   }
 
   @Test func testAppStorageStringDefault() {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     @AppStorage(.testString, store: settings) var testString
     #expect(testString == AppSettingKey.testString.defaultValue)
     #expect(settings.object(forKey: "testString") == nil)
   }
   
   @Test func testAppStorageEnumDefault() {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     @AppStorage(.testEnum, store: settings) var testEnum
     #expect(testEnum == .a)
     #expect(settings.object(forKey: "testEnum") == nil)
@@ -141,14 +140,14 @@ struct SettingsAppStorageTests {
 
 struct SnapshotTests {
   @Test func testSnapshot() {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set("foo bar", forKey: .testString)
     settings.set(123, forKey: .testInt)
 
     let snapshot = settings.snapshot(for: .testString, .testInt)
     snapshot.print()
     
-    let settings2 = UserDefaults(suiteName: UUID().uuidString)!
+    let settings2 = TestSettings()
     settings2.restore(from: snapshot)
 
     #expect(settings2.value(forKey: .testString) == "foo bar")
@@ -156,7 +155,7 @@ struct SnapshotTests {
   }
   
   @Test func testEquality() {
-    let settings = UserDefaults(suiteName: UUID().uuidString)!
+    let settings = TestSettings()
     settings.set("foo bar", forKey: .testString)
     settings.set(123, forKey: .testInt)
 

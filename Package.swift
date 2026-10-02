@@ -14,15 +14,22 @@ let package = Package(
             name: "Settings",
             targets: ["Settings"]
         ),
+        .library(
+            name: "SettingsTestSupport",
+            targets: ["SettingsTestSupport"]
+        ),
     ],
     
     targets: [
         .target(
             name: "Settings"
         ),
+        .target(
+            name: "SettingsTestSupport"
+        ),
         .testTarget(
             name: "SettingsTests",
-            dependencies: ["Settings"]
+            dependencies: ["Settings", "SettingsTestSupport"]
         ),
     ]
 )
