@@ -69,3 +69,23 @@ settings.set("octocat", forKey: .selectedAccount)
 
 settings.restore(from: snapshot)
 ```
+
+## Testing
+
+`SettingsTestSupport` provides `TestSettings`, a `UserDefaults` that keeps its values in memory.
+Give each test its own instance so that tests are isolated and leave nothing in the user's preferences:
+
+```swift
+import Settings
+import SettingsTestSupport
+
+let settings = TestSettings()
+settings.set(true, forKey: .showDebug)
+```
+
+A real suite leaves a preferences file behind once it has been written to, even after `removePersistentDomain(forName:)`.
+`TestSettings` sends no key-value observation notifications. When a test needs a real suite, create it with a recognisable prefix so that the leftover files can be found and removed:
+
+```swift
+let settings = TestSettings.persistentSuite(prefix: "MyAppTests")
+```
