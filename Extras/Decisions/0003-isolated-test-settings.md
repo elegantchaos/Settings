@@ -1,6 +1,6 @@
 # 0003 — Isolated test settings
 
-Status: Accepted
+Status: Superseded by [0004](0004-test-settings-from-chaostesting.md)
 Date: 2026-10-02
 
 Backfilled from the existing implementation and explicitly confirmed by the user on this date.
