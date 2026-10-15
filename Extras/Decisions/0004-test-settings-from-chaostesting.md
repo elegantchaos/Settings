@@ -13,7 +13,7 @@ Tests need independent settings without altering user preferences or leaving per
 
 ## Decision
 
-Take `TestSettings` from ChaosTesting, as a dependency of the test target only. Settings does not ship a test-support library of its own; `SettingsTestSupport` is removed before v1.1.0.
+Take `TestSettings` from ChaosTesting, as a dependency of the test target only. Settings does not ship a test-support library of its own; `SettingsTestSupport` is not part of any release.
 
 Give each test its own in-memory instance. When a test requires real preferences-system behaviour, use a unique persistent suite with an explicit, recognisable prefix.
 
