@@ -6,12 +6,12 @@
 import SwiftUI
 
 /// Extensions for creating AppStorage property wrappers with AppSettingKey.
-public extension AppStorage {
+extension AppStorage {
   /// Creates an AppStorage property wrapper for a boolean value.
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Bool {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Bool {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
@@ -19,16 +19,15 @@ public extension AppStorage {
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Int {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Int {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
-  
   /// Creates an AppStorage property wrapper for a double value.
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Double {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Double {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
@@ -36,7 +35,7 @@ public extension AppStorage {
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == String {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == String {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
@@ -44,7 +43,7 @@ public extension AppStorage {
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == URL {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == URL {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
@@ -52,7 +51,7 @@ public extension AppStorage {
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Date {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Date {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
@@ -60,31 +59,34 @@ public extension AppStorage {
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Data {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value == Data {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 }
 
-public extension AppStorage where Value: RawRepresentable {
-  /// Creates an AppStorage property wrapper for an integer value.
+/// Creates typed AppStorage wrappers for raw-representable preferences.
+extension AppStorage where Value: RawRepresentable {
+  /// Creates an AppStorage property wrapper for a value represented by an integer.
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value.RawValue == Int {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value.RawValue == Int {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
 
-  /// Creates an AppStorage property wrapper for an integer value.
+  /// Creates an AppStorage property wrapper for a value represented by a string.
   /// - Parameters:
   ///   - key: The app setting key containing the key name and default value.
   ///   - store: The UserDefaults store to use (defaults to standard).
-  init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil) where Value.RawValue == String {
+  public init(_ key: AppSettingKey<Value>, store: UserDefaults? = nil)
+  where Value.RawValue == String {
     self.init(wrappedValue: key.defaultValue, key.key, store: store)
   }
-
 
 }
 
-public extension AppStorage {
-  var isDefault: Bool { false }
+/// Additional state exposed by typed AppStorage wrappers.
+extension AppStorage {
+  /// Returns false; comparison with a declared key default is not implemented.
+  public var isDefault: Bool { false }
 }
