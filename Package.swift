@@ -14,22 +14,22 @@ let package = Package(
             name: "Settings",
             targets: ["Settings"]
         ),
-        .library(
-            name: "SettingsTestSupport",
-            targets: ["SettingsTestSupport"]
-        ),
     ],
-    
+
+    dependencies: [
+        .package(url: "https://github.com/elegantchaos/ChaosTesting.git", from: "1.1.0")
+    ],
+
     targets: [
         .target(
             name: "Settings"
         ),
-        .target(
-            name: "SettingsTestSupport"
-        ),
         .testTarget(
             name: "SettingsTests",
-            dependencies: ["Settings", "SettingsTestSupport"]
+            dependencies: [
+                "Settings",
+                .product(name: "ChaosTesting", package: "ChaosTesting"),
+            ]
         ),
     ]
 )

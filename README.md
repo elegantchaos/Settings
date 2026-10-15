@@ -72,12 +72,12 @@ settings.restore(from: snapshot)
 
 ## Testing
 
-`SettingsTestSupport` provides `TestSettings`, a `UserDefaults` that keeps its values in memory.
+[ChaosTesting](https://github.com/elegantchaos/ChaosTesting) provides `TestSettings`, a `UserDefaults` that keeps its values in memory.
 Give each test its own instance so that tests are isolated and leave nothing in the user's preferences:
 
 ```swift
+import ChaosTesting
 import Settings
-import SettingsTestSupport
 
 let settings = TestSettings()
 settings.set(true, forKey: .showDebug)

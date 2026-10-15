@@ -3,9 +3,9 @@
 //  Copyright © 2026 Elegant Chaos Limited. All rights reserved.
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+import ChaosTesting
 import Foundation
 import Settings
-import SettingsTestSupport
 import Testing
 
 extension AppSettingKey where Value == String {
